@@ -1,4 +1,5 @@
 #!/bin/bash
+# ./ptxt3.sh -a -s -sd -d -asd -d -asd2 2 
 
 argArray=( "$@" )
 arrayLen="${#argArray[@]}"
