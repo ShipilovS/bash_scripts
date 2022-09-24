@@ -1,4 +1,6 @@
 #!/bin/bash
+# ./ptxt1.sh -n 2 -t 0.22 -- he 
+
 
 while [ -n "$1" ];
 do
@@ -22,8 +24,20 @@ do
     esac
 done
 
+if [[ -z "$n_var" ]]
+then
+    echo "Params -n is Null"
+    exit 1
+fi
+
 for t in $(seq $n_var)
 do
-    echo $text
-    sleep $t_var
+if [[ -n "$t_var" ]]
+    then
+        echo $text
+        sleep $t_var
+    else
+        echo "Params -t is Null"
+        exit 1
+    fi
 done
