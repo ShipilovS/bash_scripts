@@ -4,8 +4,8 @@
 argArray=( "$@" )
 arrayLen="${#argArray[@]}"
 
-flag=1
-for (( i=0; i < arrayLen-1 && flag==1 ; i++ ))
+
+for (( i=0; i < arrayLen-1 ; i++ ))
 do
     flag=0
     for (( j=0; j<arrayLen-i-1; j++ ))
@@ -15,7 +15,6 @@ do
             temp=${argArray[$j]}
             argArray[$j]=${argArray[$j+1]}
             argArray[$j+1]=$temp
-            flag=1
         fi
     done
 done
