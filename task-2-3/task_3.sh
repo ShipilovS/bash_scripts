@@ -16,13 +16,20 @@
 
 
 echo "Starting task 3"
+arr=()
 
 func_parse_date () {
-  func_result="some result"
+    text=$4
+    text_from_args=$l_var
+    if [[ $text == $text_from_args ]]; then
+        echo $@
+    fi
 }
+
 
 func_parse_time () {
   func_result="some result"
+  text = 
 }
 
 func_parse_log_level () {
@@ -50,13 +57,21 @@ done
 shift $(expr $OPTIND - 1)
 
 filename=$1
+# exec 4<$filename
 
-echo "filename = $filename"
+# func_parse_date "WARN" $l_var
 
-# filename='company.txt'
+echo "Start"
+
+while read  p ; do
+  func_parse_date $p $l_var
+done < $filename
+
+echo "end"
 # n=1
 # while read line; do
-# # reading each line
-# echo "Line No. $n : $line"
-# n=$((n+1))
+#   echo "Line No. $n : $line"
+#   n=$((n+1))
 # done < $filename
+
+# echo $arr
