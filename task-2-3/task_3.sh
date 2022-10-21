@@ -12,28 +12,49 @@
 # Вывод отфильтрованных строчек должен производиться в стандартный вывод (std_out).  
 # Вывод ошибок - в поток ошибок (std_err).
 
-# ./task_3.sh -l INFO -d "+2015-07-29" -t "17:41:44" Zookeeper_2k.log
+# ./task_3.sh -l INFO -d "+2015-07-29" -t "19:25:07" Zookeeper_2k.log
 
 
 echo "Starting task 3"
 arr=()
 
 func_parse_date () {
-    text=$4
-    text_from_args=$l_var
-    if [[ $text == $text_from_args ]]; then
-        echo $@
+    text=$1
+    text_from_args=$d_var
+    if [[ ${d_var:0:1} == '+' ]]; then
+        text_slice=${d_var:1:11}
+        if [[ $text > $text_slice ]]; then
+            echo $@
+            # exit 1
+        fi 
+    elif [[ ${d_var:0:1} == '-' ]]; then
+        text_slice=${d_var:1:11}
+        if [[ $text < $text_slice ]]; then
+            echo $@
+            # exit 1
+        fi 
+    else 
+        if [[ $text == $text_from_args ]]; then
+            echo $@
+        fi
     fi
 }
 
 
 func_parse_time () {
-  func_result="some result"
-  text = 
+    time_from_file=$2
+    time_from_file_slise=${time_from_file:0:8}
+    if [[ $time_from_file_slise == $t_var ]]; then
+        echo $@
+    fi
 }
 
 func_parse_log_level () {
-  func_result="some result"
+    text=$4
+    text_from_args=$l_var
+    if [[ $text == $text_from_args ]]; then
+        echo $@
+    fi
 }
 
 while getopts l:d:t: arg
@@ -57,15 +78,17 @@ done
 shift $(expr $OPTIND - 1)
 
 filename=$1
-# exec 4<$filename
+exec 4<$filename
 
 # func_parse_date "WARN" $l_var
 
 echo "Start"
 
-while read  p ; do
-  func_parse_date $p $l_var
-done < $filename
+while read -u4 p ; do
+    # func_parse_log_level $p 
+    func_parse_time $p
+    # func_parse_date $p  
+done
 
 echo "end"
 # n=1
