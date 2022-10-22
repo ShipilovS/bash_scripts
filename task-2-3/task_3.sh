@@ -17,25 +17,26 @@
 
 echo "Starting task 3"
 arr=()
-
 func_parse_date () {
     text=$1
     text_from_args=$d_var
-    if [[ ${d_var:0:1} == '+' ]]; then
-        text_slice=${d_var:1:11}
-        if [[ $text > $text_slice ]]; then
-            echo $@
-            # exit 1
-        fi 
-    elif [[ ${d_var:0:1} == '-' ]]; then
-        text_slice=${d_var:1:11}
-        if [[ $text < $text_slice ]]; then
-            echo $@
-            # exit 1
-        fi 
-    else 
-        if [[ $text == $text_from_args ]]; then
-            echo $@
+    if [[ ! -z "$d_var" ]]; then
+        if [[ ${d_var:0:1} == '+' ]]; then
+            text_slice=${d_var:1:11}
+            if [[ $text > $text_slice ]]; then
+                echo $@
+                # exit 1
+            fi 
+        elif [[ ${d_var:0:1} == '-' ]]; then
+            text_slice=${d_var:1:11}
+            if [[ $text < $text_slice ]]; then
+                echo $@
+                # exit 1
+            fi 
+        else 
+            if [[ $text == $text_from_args ]]; then
+                echo "THE TExt = $@"
+            fi
         fi
     fi
 }
@@ -44,18 +45,31 @@ func_parse_date () {
 func_parse_time () {
     time_from_file=$2
     time_from_file_slise=${time_from_file:0:8}
-    if [[ $time_from_file_slise == $t_var ]]; then
-        echo $@
+    if [[ ! -z "$t_var" ]]; then
+        if [[ $time_from_file_slise == $t_var ]]; then
+            echo $@
+        fi
     fi
 }
 
 func_parse_log_level () {
-    text=$4
-    text_from_args=$l_var
-    if [[ $text == $text_from_args ]]; then
-        echo $@
+    if [[ ! -z "$l_var" ]]; then
+        text=$4
+        text_from_args=$l_var
+        if [[ $text == $text_from_args ]]; then
+            echo $@
+        fi
     fi
 }
+
+
+func_wrapper(){
+    result="$(func_parse_log_level $@)"
+    echo $result
+    # arr+="$(func_parse_time $@)"
+    # arr+="$(func_parse_date $@)"
+}
+
 
 while getopts l:d:t: arg
 do
@@ -78,18 +92,21 @@ done
 shift $(expr $OPTIND - 1)
 
 filename=$1
-exec 4<$filename
 
-# func_parse_date "WARN" $l_var
+exec 3<&0 
+exec < $filename
 
 echo "Start"
 
-while read -u4 p ; do
+while read p ; do
     # func_parse_log_level $p 
-    func_parse_time $p
+    func_wrapper $p
+    # func_parse_time $p
     # func_parse_date $p  
-done
+done > Zookeeper_2k_result.log
 
+exec 0<&3                 
+exec 3<&-
 echo "end"
 # n=1
 # while read line; do
