@@ -108,6 +108,7 @@ shift $(expr $OPTIND - 1)
 filename=$1
 
 exec 3<&0 
+exec 3<&-
 exec < $filename
 
 echo "Start"
