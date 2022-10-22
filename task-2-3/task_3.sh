@@ -13,7 +13,7 @@
 # Вывод ошибок - в поток ошибок (std_err).
 
 # ./task_3.sh -l INFO -d "+2015-07-29" -t "19:25:07" Zookeeper_2k.log
-
+# ./task_3.sh -l INFO -d "2015-07-29" -t "17:41:44" Zookeeper_2k.log
 
 echo "Starting task 3"
 arr=()
@@ -35,7 +35,7 @@ func_parse_date () {
             fi 
         else 
             if [[ $text == $text_from_args ]]; then
-                echo "THE TExt = $@"
+                echo $@
             fi
         fi
     fi
@@ -64,10 +64,24 @@ func_parse_log_level () {
 
 
 func_wrapper(){
-    result="$(func_parse_log_level $@)"
-    echo $result
-    # arr+="$(func_parse_time $@)"
-    # arr+="$(func_parse_date $@)"
+    text=$@
+    result=$text
+    if [[ ! -z "$t_var" ]]; then
+        result="$(func_parse_time $result)"
+    fi
+
+    if [[ ! -z "$l_var" ]]; then
+        result="$(func_parse_log_level $result)"
+    fi
+
+    if [[ ! -z "$d_var" ]]; then
+        result="$(func_parse_date $result)"
+    fi
+
+    # result="$(func_parse_log_level $text)"
+    # result="$(func_parse_date $result)"
+    # # result="$(func_parse_time $result)"
+    echo "$result"
 }
 
 
@@ -99,19 +113,12 @@ exec < $filename
 echo "Start"
 
 while read p ; do
-    # func_parse_log_level $p 
-    func_wrapper $p
+    result="$(func_wrapper $p)"
+    echo "$result"
+    # func_wrapper $p
     # func_parse_time $p
     # func_parse_date $p  
 done > Zookeeper_2k_result.log
 
 exec 0<&3                 
 exec 3<&-
-echo "end"
-# n=1
-# while read line; do
-#   echo "Line No. $n : $line"
-#   n=$((n+1))
-# done < $filename
-
-# echo $arr
