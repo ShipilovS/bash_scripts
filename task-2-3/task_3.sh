@@ -14,6 +14,7 @@
 
 # ./task_3.sh -l INFO -d "+2015-07-29" -t "19:25:07" Zookeeper_2k.log
 # ./task_3.sh -l INFO -d "2015-07-29" -t "17:41:44" Zookeeper_2k.log
+# ./task_3.sh -l WARN -d "-2017-07-30" Zookeeper_2k.log
 
 echo "Starting task 3"
 arr=()
@@ -76,12 +77,16 @@ func_wrapper(){
 
     if [[ ! -z "$d_var" ]]; then
         result="$(func_parse_date $result)"
+    fi 
+
+    if [[ ! -z $result ]]; then
+        echo "$result"
     fi
 
     # result="$(func_parse_log_level $text)"
     # result="$(func_parse_date $result)"
     # # result="$(func_parse_time $result)"
-    echo "$result"
+    # echo "$result"
 }
 
 
@@ -114,9 +119,7 @@ exec < $filename
 echo "Start"
 
 while read p ; do
-    result="$(func_wrapper $p)"
-    echo "$result"
-    # func_wrapper $p
+    func_wrapper $p
     # func_parse_time $p
     # func_parse_date $p  
 done > Zookeeper_2k_result.log
