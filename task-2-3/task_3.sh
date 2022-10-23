@@ -17,7 +17,9 @@
 # ./task_3.sh -l WARN -d "-2017-07-30" Zookeeper_2k.log
 
 echo "Starting task 3"
-arr=()
+arr_d=()
+arr_l=()
+arr_t=()
 func_parse_date () {
     text=$1
     text_from_args=$d_var
@@ -45,9 +47,9 @@ func_parse_date () {
 
 func_parse_time () {
     time_from_file=$2
-    time_from_file_slise=${time_from_file:0:8}
+    time_from_file_slice=${time_from_file:0:8}
     if [[ ! -z "$t_var" ]]; then
-        if [[ $time_from_file_slise == $t_var ]]; then
+        if [[ $time_from_file_slice == $t_var ]]; then
             echo $@
         fi
     fi
@@ -57,9 +59,12 @@ func_parse_log_level () {
     if [[ ! -z "$l_var" ]]; then
         text=$4
         text_from_args=$l_var
-        if [[ $text == $text_from_args ]]; then
-            echo $@
-        fi
+        for elem in ${arr_l[@]};
+        do
+            if [[ $text == $elem ]]; then
+                echo $@
+            fi
+        done
     fi
 }
 
@@ -90,17 +95,21 @@ func_wrapper(){
 }
 
 
+
 while getopts l:d:t: arg
 do
     case $arg in 
     l )
         l_var=$OPTARG
+        arr_l+=($l_var)
         ;;
     d )
         d_var=$OPTARG
+        arr_d+=($d_var)
         ;;
     t )
         t_var=$OPTARG
+        arr_t+=($t_var)
         ;;
     * )
         echo "Usage $0 -n . -t ."
@@ -124,5 +133,7 @@ while read p ; do
     # func_parse_date $p  
 done > Zookeeper_2k_result.log
 
-exec 0<&3                 
-exec 3<&-
+# exec 0<&3                 
+# exec 3<&-
+
+
