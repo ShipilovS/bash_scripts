@@ -16,7 +16,8 @@
 # ./task_3.sh -l INFO -d "2015-07-29" -t "17:41:44" Zookeeper_2k.log
 # ./task_3.sh -l WARN -d "-2017-07-30" Zookeeper_2k.log
 # ./task_3.sh -d "+2015-07-30" -d "2015-08-20"  Zookeeper_2k.log
-
+# ./task_3.sh -d "+2015-07-30" -d "-2015-08-30"  -l INFO Zookeeper_2k.log
+# ./task_3.sh -t "+17:41:43" -t "-18:12:00" Zookeeper_2k.log
 
 echo "Starting task 3"
 arr_d=()
@@ -67,11 +68,44 @@ func_parse_date () {
 
 
 func_parse_time () {
-    time_from_file=$2
-    time_from_file_slice=${time_from_file:0:8}
-    if [[ ! -z "$t_var" ]]; then
-        if [[ $time_from_file_slice == $t_var ]]; then
-            echo $@
+    text=$2
+    text=${text:0:8}
+    text_from_args=$t_var
+    if [[ ! -z "$t_var" ]]; then # если параметр один
+        if [[ ${#arr_t[@]} -le "1" ]]; then # -le - <=
+            if [[ ${t_var:0:1} == '+' ]]; then
+                text_slice=${t_var:1:8}
+                if [[ $text > $text_slice ]]; then
+                    echo $@
+                fi 
+            elif [[ ${t_var:0:1} == '-' ]]; then
+                text_slice=${t_var:1:8}
+                if [[ $text < $text_slice ]]; then
+                    echo $@
+                fi 
+            else 
+                if [[ $text == $text_from_args ]]; then
+                    echo $@
+                fi
+            fi
+        else # если параметра 2 (не более)
+            for elem in ${arr_t[@]};
+            do
+                if [[ ${elem:0:1} == '+' ]]; then
+                    text_slice_more=${elem:1:8} 
+                elif [[ ${elem:0:1} == '-' ]]; then
+                    text_slice_less=${elem:1:8}
+                else 
+                    if [[ $text == $elem ]]; then
+                        echo $@
+                    fi
+                fi
+            done
+            if [[ ! -z $text_slice_more ]] && [[ ! -z $text_slice_less ]]; then
+                if [[ $text > $text_slice_more ]] && [[ $text < $text_slice_less ]]; then # &&
+                    echo $@
+                fi 
+            fi
         fi
     fi
 }
