@@ -18,6 +18,7 @@
 # ./task_3.sh -d "+2015-07-30" -d "2015-08-20"  Zookeeper_2k.log
 # ./task_3.sh -d "+2015-07-30" -d "-2015-08-30"  -l INFO Zookeeper_2k.log
 # ./task_3.sh -t "+17:41:43" -t "-18:12:00" Zookeeper_2k.log
+# ./task_3.sh -t "+19:21:42" -t "-19:50:42" -d "+2015-07-28" -d "-2015-08-12" -l INFO Zookeeper_2k.log
 
 echo "Starting task 3"
 arr_d=()
