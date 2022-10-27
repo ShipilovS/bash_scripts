@@ -15,6 +15,8 @@
 # ./task_3.sh -l INFO -d "+2015-07-29" -t "19:25:07" Zookeeper_2k.log
 # ./task_3.sh -l INFO -d "2015-07-29" -t "17:41:44" Zookeeper_2k.log
 # ./task_3.sh -l WARN -d "-2017-07-30" Zookeeper_2k.log
+# ./task_3.sh -d "+2015-07-30" -d "2015-08-20"  Zookeeper_2k.log
+
 
 echo "Starting task 3"
 arr_d=()
@@ -23,22 +25,41 @@ arr_t=()
 func_parse_date () {
     text=$1
     text_from_args=$d_var
-    if [[ ! -z "$d_var" ]]; then
-        if [[ ${d_var:0:1} == '+' ]]; then
-            text_slice=${d_var:1:11}
-            if [[ $text > $text_slice ]]; then
-                echo $@
-                # exit 1
-            fi 
-        elif [[ ${d_var:0:1} == '-' ]]; then
-            text_slice=${d_var:1:11}
-            if [[ $text < $text_slice ]]; then
-                echo $@
-                # exit 1
-            fi 
-        else 
-            if [[ $text == $text_from_args ]]; then
-                echo $@
+    if [[ ! -z "$d_var" ]]; then # если параметр один
+        if [[ ${#arr_d[@]} -le "1" ]]; then # -le - <=
+            if [[ ${d_var:0:1} == '+' ]]; then
+                text_slice=${d_var:1:11}
+                if [[ $text > $text_slice ]]; then
+                    echo $@
+                fi 
+            elif [[ ${d_var:0:1} == '-' ]]; then
+                text_slice=${d_var:1:11}
+                if [[ $text < $text_slice ]]; then
+                    echo $@
+                fi 
+            else 
+                if [[ $text == $text_from_args ]]; then
+                    echo $@
+                fi
+            fi
+        else # если параметра 2 (не более)
+            for elem in ${arr_d[@]};
+            do
+                if [[ ${elem:0:1} == '+' ]]; then
+                    text_slice_more=${elem:1:11} 
+                elif [[ ${elem:0:1} == '-' ]]; then
+                    text_slice_less=${elem:1:11}
+                else 
+                    if [[ $text == $elem ]]; then
+                        echo $@
+                    fi
+                fi
+            done
+            if [[ ! -z $text_slice_more ]] && [[ ! -z $text_slice_less ]]; then
+                if [[ $text > $text_slice_more ]] && [[ $text < $text_slice_less ]]; then # &&
+                    # echo " $text > $text_slice_more ---  $text < $text_slice_less"
+                    echo $@
+                fi 
             fi
         fi
     fi
