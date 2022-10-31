@@ -27,14 +27,14 @@ arr_t=()
 func_parse_date () {
     text=$1
     text_from_args=$d_var
-    if [[ ! -z "$d_var" ]]; then # если параметр один
+    if [[ ! -z "$d_var" ]]; then # если параметр один и не нулевой
         if [[ ${#arr_d[@]} -le "1" ]]; then # -le - <=
-            if [[ ${d_var:0:1} == '+' ]]; then
-                text_slice=${d_var:1:11}
+            if [[ ${d_var:0:1} == '+' ]]; then # если первый символ = '+'
+                text_slice=${d_var:1:11} # берем текст с 1 позиции до конца
                 if [[ $text > $text_slice ]]; then
-                    echo $@
+                    echo $@ # выводим все
                 fi 
-            elif [[ ${d_var:0:1} == '-' ]]; then
+            elif [[ ${d_var:0:1} == '-' ]]; then # если первый символ = '-'
                 text_slice=${d_var:1:11}
                 if [[ $text < $text_slice ]]; then
                     echo $@
@@ -57,8 +57,8 @@ func_parse_date () {
                     fi
                 fi
             done
-            if [[ ! -z $text_slice_more ]] && [[ ! -z $text_slice_less ]]; then
-                if [[ $text > $text_slice_more ]] && [[ $text < $text_slice_less ]]; then # &&
+            if [[ ! -z $text_slice_more ]] && [[ ! -z $text_slice_less ]]; then # если текст больше даты(more) и меньше даты(less) ненулевые
+                if [[ $text > $text_slice_more ]] && [[ $text < $text_slice_less ]]; then # && если датa more больше даты И(вместе считаем) меньше даты(less)
                     # echo " $text > $text_slice_more ---  $text < $text_slice_less"
                     echo $@
                 fi 
@@ -128,7 +128,7 @@ func_parse_log_level () {
 func_wrapper(){
     text=$@
     result=$text
-    if [[ ! -z "$t_var" ]]; then
+    if [[ ! -z "$t_var" ]]; then # если параметры входные не нулевые, то добавлять к получившемуся result запросы
         result="$(func_parse_time $result)"
     fi
 
