@@ -2,18 +2,23 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <unistd.h>
 
-int
-main(int argc, char *argv[])
+#define LEN 50
+
+
+int main(int argc, char *argv[])
 {
     int flags, opt;
     int nsecs, tfnd;
     double tsecs;
+    char *text;
 
     nsecs = 0;
     tfnd = 0;
     flags = 0;
-    while ((opt = getopt(argc, argv, "n:t:")) != -1) {
+    while ((opt = getopt(argc, argv, "n:t:w:")) != -1) {
         switch (opt) {
         case 'n':
             flags = 1;
@@ -23,17 +28,28 @@ main(int argc, char *argv[])
             tsecs = atof(optarg);
             tfnd = 1;
             break;
-        default: /* '?' */
+        default:
             fprintf(stderr, "(usage: prntxt -n|--number <N> [-t|--timeout [<T>]] -- <TEXT>)");
             exit(EXIT_FAILURE);
         }
     }
+    
+    for(int i = 0; i < argc; i++){
+        if(strcmp(argv[i], "--") == 0)
+        {
+            text = argv[i+1]; 
+        }
+    }
 
-    printf("flags=%d; tfnd=%d; nsecs=%d; tsecs=%f; optind=%d\n",
-            flags, tfnd, nsecs, tsecs, optind);
-
-
-    /* Other code omitted */
-
-    exit(EXIT_SUCCESS);
+    if(text != NULL){
+        for(int i = 0; i < nsecs; i++){
+            printf("%s\n", text);
+            sleep(tsecs);
+        }
+    }
+    else
+    {
+        fprintf(stderr, "(usage: prntxt -n|--number <N> [-t|--timeout [<T>]] -- <TEXT>)");
+        exit(EXIT_FAILURE);
+    }
 }
