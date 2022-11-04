@@ -5,6 +5,8 @@
 #include <string.h>
 #include <unistd.h>
 
+// ./task4 -n 11 -t 3 -- Hello
+
 #define LEN 50
 
 
@@ -18,7 +20,7 @@ int main(int argc, char *argv[])
     nsecs = 0;
     tfnd = 0;
     flags = 0;
-    while ((opt = getopt(argc, argv, "n:t:w:")) != -1) {
+    while ((opt = getopt(argc, argv, "n:t:")) != -1) {
         switch (opt) {
         case 'n':
             flags = 1;
