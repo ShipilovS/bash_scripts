@@ -12,23 +12,18 @@
 
 int main(int argc, char *argv[])
 {
-    int flags, opt;
-    int nsecs, tfnd;
+    int opt;
+    int nsecs;
     double tsecs;
     char *text;
 
-    nsecs = 0;
-    tfnd = 0;
-    flags = 0;
     while ((opt = getopt(argc, argv, "n:t:")) != -1) {
         switch (opt) {
         case 'n':
-            flags = 1;
             nsecs = atoi(optarg);
             break;
         case 't':
             tsecs = atof(optarg);
-            tfnd = 1;
             break;
         default:
             fprintf(stderr, "(usage: prntxt -n|--number <N> [-t|--timeout [<T>]] -- <TEXT>)");
