@@ -3,7 +3,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
+#include <getopt.h>
+
 
 // ./task4 -n 11 -t 3 -- Hello
 
@@ -17,7 +18,22 @@ int main(int argc, char *argv[])
     double tsecs;
     char *text;
 
-    while ((opt = getopt(argc, argv, "n:t:")) != -1) {
+    struct option longopts[] = {
+        {
+        .name = "number",
+        .has_arg = required_argument,
+        .flag = NULL,
+        .val = 'n'
+        },
+        {
+        .name = "timeout",
+        .has_arg = required_argument,
+        .flag = NULL,
+        .val = 't'
+        }
+    };
+
+    while ((opt = getopt_long(argc, argv, "n:t:", longopts, NULL)) != -1) {
         switch (opt) {
         case 'n':
             nsecs = atoi(optarg);
