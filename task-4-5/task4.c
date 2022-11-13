@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 {
     int opt;
     int nsecs;
-    double tsecs;
+    double tsecs = -1;
     char *text;
 
     struct option longopts[] = {
@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
         }
     };
 
-    while ((opt = getopt_long(argc, argv, "n:t:", longopts, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "n:t::", longopts, NULL)) != -1) {
         switch (opt) {
         case 'n':
             nsecs = atoi(optarg);
@@ -57,7 +57,12 @@ int main(int argc, char *argv[])
     if(text != NULL){
         for(int i = 0; i < nsecs; i++){
             printf("%s\n", text);
-            sleep(tsecs);
+            if(tsecs > 0){
+                sleep(tsecs);
+            }
+            else{
+                sleep(1);
+            }
         }
     }
     else
