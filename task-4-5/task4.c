@@ -1,4 +1,3 @@
-
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -33,7 +32,7 @@ int main(int argc, char *argv[])
         }
     };
 
-    while ((opt = getopt_long(argc, argv, "n:t::", longopts, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "n:t:", longopts, NULL)) != -1) {
         switch (opt) {
         case 'n':
             nsecs = atoi(optarg);
