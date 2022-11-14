@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <stdio.h>
 
-int main(){
-    printf("HELLO");
+int main(int argc, char *argv[])
+{
+    printf("Hello with args: %s\n", argv[0]);
 }

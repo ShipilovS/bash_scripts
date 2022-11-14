@@ -18,10 +18,13 @@ int main(int argc, char *argv[])
   char *outname = argv[2];
 
   printf("%s\n", filename);
-
+  printf("Parent PID: %d\n", getpid());
+  printf("PPID: %d\n", getppid());
 
   pid_t pid = fork();
   if(pid == 0){
+    printf("Child PID: %d\n", getpid());
+    printf("PPID: %d\n", getppid());
     int file = open(outname, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
     dup2(file, 1);
     dup2(file, 2);
