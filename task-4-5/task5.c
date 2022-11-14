@@ -27,7 +27,6 @@ int main(int argc, char *argv[])
     dup2(file, 2);
 
     execl(filename, filename, NULL);
-    // perror("execl");
 
     close(file);
   }
