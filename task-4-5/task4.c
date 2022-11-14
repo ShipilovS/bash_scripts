@@ -6,6 +6,9 @@
 
 
 // ./task4 -n 11 -t 3 -- Hello
+// ./task4 --number 12 --timeout -- hello
+// ./task4 --number 3 -t -- hello
+// ./task4 -n 3 -t -- hello
 
 #define LEN 50
 
@@ -14,7 +17,7 @@ int main(int argc, char *argv[])
 {
     int opt;
     int nsecs;
-    double tsecs = -1;
+    double tsecs;
     char *text;
 
     struct option longopts[] = {
@@ -59,14 +62,14 @@ int main(int argc, char *argv[])
             if(tsecs > 0){
                 sleep(tsecs);
             }
-            else{
+            else if(tsecs == 0){
                 sleep(1);
             }
         }
     }
     else
     {
-        fprintf(stderr, "(usage: prntxt -n|--number <N> [-t|--timeout [<T>]] -- <TEXT>)");
+        fprintf(stderr, "(usage: prntxt -n|--number <N> [-t|--timeout [<T>]] -- <TEXT>)\n");
         exit(EXIT_FAILURE);
     }
 }
