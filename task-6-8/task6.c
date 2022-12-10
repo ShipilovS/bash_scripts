@@ -1,22 +1,26 @@
 // Создает дочерний процесс, который каждые 3 секунды посылает сигнал SIGUSR1 родительскому процессу  - есть
 // Создает в текущем каталоге именованный канал с именем requests и открывает его для чтения - есть 
 // Создает сигнальные дескрипторы для обработки сигналов SIGINT и SIGUSR1 вроде есть
-// Используя poll ожидает в цикле на дескрипторах сигналов и канала
-// При получении данных из именованного канала выводит данные на экран как текст
-// При получении сигнала SIGUSR1 выводит имя полученного сигнала на экран
-// При получении сигнала SIGINT завершает цикл ожидания
+// Используя poll ожидает в цикле на дескрипторах сигналов и канала есть
+// При получении данных из именованного канала выводит данные на экран как текст есть
+// При получении сигнала SIGUSR1 выводит имя полученного сигнала на экран есть
+// При получении сигнала SIGINT завершает цикл ожидания есть
 // После завершения цикла ожидания посылает сигнал SIGTERM дочернему процессу
 // Ждет завершение дочернего процесса и выводит на экран его код завершения
 // Удаляет ранее созданный именованный канал reqests и завершается
 
 #include <signal.h> // sigemptyset, sigaddset, sigprocmask
 #include <sys/signalfd.h> // signalfd
+#include <sys/wait.h> // signalfd
 #include <unistd.h> // alarm, read
 #include <stdio.h> // printf
 #include <poll.h> // poll
 #include <string.h> // strsignal
 #include <fcntl.h> // open
 #include <stdlib.h>
+volatile sig_atomic_t stop;
+
+pid_t child_pid = -1;
 
 void sig_handler(int signo)
 {
@@ -38,17 +42,34 @@ void sig_handler(int signo)
 
 }
 
+void sigint_handler(int sig){
+  printf("\nCatched SIGINT \n");
+  stop = 1;
+  printf("stop = %d\n", stop);
+  // exit(0);
+}
+
+void sigusr1_handler(int sig){
+  printf("\nCatched SIGUSR1 \n");
+}
+
+void sigterm_handler(int sig){
+  printf("SIGTERM handler");
+  printf("Child pid = %d\n", getpid());
+  kill(child_pid, SIGTERM);
+}
 int main()
 {
 
     // создаем сигнальный файловый дескриптор для SIGALRM
     sigset_t sig;
     sigemptyset(&sig);
-    signal(SIGINT, sig_handler);
-    signal(SIGUSR1, sig_handler);
+    signal(SIGINT, sigint_handler);
+    signal(SIGUSR1, sigusr1_handler);
     sigaddset(&sig, SIGALRM);
     sigprocmask(SIG_BLOCK, &sig, NULL);
     int sigfd = signalfd(-1, &sig, 0);
+    int status = 0;
 
     sigset_t bs, os, b2;
     sigemptyset(&bs);
@@ -71,8 +92,16 @@ int main()
         {.fd = sigfd, .events = POLLIN },
         {.fd = pipefd, .events = POLLIN }
     };
+    // child_pid = fork();
+    // if (child_pid == 0){
+    //   printf("Child");
+    //   // exit(1);
+    // }
+    // else {
+    //   child_pid = wait(&status);
+    // }
 
-    while (1)
+    while (!stop)
     {
         // ждем данные в файловых дескрипторах
         poll(pfd, 2, -1);
@@ -83,7 +112,7 @@ int main()
             // считываем параметры сигнала
             struct signalfd_siginfo siginfo = {};
             read(sigfd, &siginfo, sizeof(siginfo));
-            // выводим имя сигнала
+            // выводим имя сигнала - SIGUSR1f
             printf("Catched signal %s\n", strsignal(siginfo.ssi_signo));
 
             // новый сигнал SIGALRM будет отправлен через 3 секунды
@@ -102,6 +131,9 @@ int main()
             }
         }
     }
+
+
+    raise(SIGTERM);
 
     return 0;
 }
